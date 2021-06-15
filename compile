@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# main init
+gcc -c -ggdb -Wall -o main.o main.c
+
+# library routines
+gcc -c -ggdb -Wall -o pdetach.o pdetach.c
+gcc -c -ggdb -Wall -o dprintf.o dprintf.c
+gcc -c -ggdb -Wall -o base64.o base64.c
+
+# program functions
+gcc -c -ggdb -Wall -o devcheck.o devcheck.c
+gcc -c -ggdb -Wall -o updateip.o updateip.c
+gcc -c -ggdb -Wall -o debug.o debug.c
+
+# consolodation
+gcc -ggdb -Wall -o dhsd main.o debug.o pdetach.o dprintf.o base64.o  devcheck.o updateip.o 
+
+# cleanup
+rm *.o
