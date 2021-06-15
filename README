@@ -5,15 +5,7 @@ DHSD is a dynamic update engine for the dhs.org dynamic dns service.
 The aim is to provide a quick and efficent update engine that will
 monitor selected network devices and check for changes of the IP address.
 
-Project Development Staff:
-
-   Programmers:
-	* Nik_Doof (nik_doof@h3o.org)
-
-   Documentors:
-        * Qwaz (qwaszx@h3o.org)
-
-PLEASE NOTE, this is a CVS Alpha release (in other words...not working)
+PLEASE NOTE, this is a CVS BETA release (in other words...half working)
 i have put this code onto the CVS for users to take a look at and see
 how it works.
 
@@ -22,4 +14,4 @@ Thanks go to:
 	* Sourceforge for hosting my project
 	* Dyfet for his pdetach() code
         * DFX for his dprintf() code
-        
+        * Peter Mac Millan for his base64.c

@@ -1,5 +1,5 @@
-
-// Shamelessly snarfed from Peter Mac Millan =/
+/* Original codes shamelessly snarfed from Peter Mac Millan =/
+   Few code cleanups using better, more secure functions    */
   
 #include <string.h>
 #include <stdio.h>
@@ -51,9 +51,7 @@ void encbasic( char *d, const char *u, const char *p )
 {
    char _buf[4*1024];
    
-   strcpy( _buf, u );
-   strcat( _buf, ":" );
-   strcat( _buf, p );
-   benc( d, _buf );
+   sprintf( _buf, "%s:%s", u, p);
+   benc( d, _buf);
 }
 

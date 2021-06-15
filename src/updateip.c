@@ -1,3 +1,24 @@
+/*
+   DHSD updateip.c - tcp/http update code
+   Copyright (C) 2000 Andrew Williams
+    
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+    
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+   
+*/
+
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -29,24 +50,24 @@ int sconnect(char *ip)
 
 int updateip(char *ipaddr, char *dhsdom, char *dhshost)
 {
-  char post_data[255];
-  char post_head[64];
-  char auth_head[128];
-  char chostname[50];
-  char tmpdatabuf[8192];
-  char databuf[4*8192];
-  char outbuf[8192];
-  char b64str[255];
+  char post_data[128];
+  char post_head[128];
+  char auth_head[96];
+  char chostname[64];
+  char tmpdatabuf[128];
+  char databuf[8192];
+  char outbuf[2048];
+  char b64str[64];
   int ibytes;
 
-  encbasic(b64str,USR_LOGIN,USR_PASSWD);
+  encbasic(b64str,dhs_username,dhs_passwd);
   sprintf(chostname,"%s.%s",dhshost,dhsdom);
 
   sprintf(auth_head,"Authorization: Basic %s\r\n",b64str);
  
   sprintf(post_data,"%stype=4&updatetype=Online&hostscmd=edit&hostscmdstage=2&ip=%s&mx=%s&domain=%s&hostname=%s",DHS_ADDR,ipaddr,chostname,dhsdom,dhshost);
   sprintf(post_head,"GET %s HTTP/1.0\r\n",post_data);
- 
+
   sockfd = sconnect(DHS_IP);
   if (sockfd == -1) {
     pdebug("sconnect() failed");
@@ -55,20 +76,20 @@ int updateip(char *ipaddr, char *dhsdom, char *dhshost)
 
   sprintf(outbuf,"%s%s\r\n\r\n",post_head,auth_head);
 
+  //pdebug(outbuf);
+
   send(sockfd,outbuf,strlen(outbuf),0);
 
   do {
-    ibytes = recv(sockfd, tmpdatabuf, 8192, 0); 
+    ibytes = recv(sockfd, tmpdatabuf, 128, 0); 
     if (ibytes > 0) {
       tmpdatabuf[ibytes] = '\0';
       strncat(databuf,tmpdatabuf,strlen(tmpdatabuf));
     }
   } while (ibytes > 0);
-  pdebug(tmpdatabuf);
+  pdebug(databuf);
 
-  //close(sockfd);
-
-  pdebug("socket closed");
+  fclose(sockfd);
 
   /* Some error checking code could be handy... */
 

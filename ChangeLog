@@ -1,0 +1,8 @@
+Version 0.01
+
+  * First version release
+
+Version 0.02
+
+  * New makefile compile/install system
+  * Now uses a config file

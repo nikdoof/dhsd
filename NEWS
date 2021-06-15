@@ -1,0 +1,4 @@
+DHSD, a new working dhs.org update daemon for linux. This daemon can
+work on any device and use any host or domain combination. It is wrote
+in fast C code to speed it up and there are no external libraries for
+easy installation.

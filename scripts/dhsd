@@ -1,0 +1,50 @@
+#! /bin/sh
+#
+# chkconfig: 345 50 50
+# description: dhsd dynamic dns record updater.
+# processname: dhsd
+
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Get config.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+if [ ${NETWORKING} = "no" ]
+then
+	exit 0
+fi
+
+[ -f /usr/sbin/dhsd ] || exit 0
+
+# See how we were called.
+case "$1" in
+  start)
+	echo -n "Starting dhsd: "
+	daemon dhsd 
+
+	echo
+	touch /var/lock/subsys/dhsd
+	;;
+  stop)
+	echo -n "Stopping dhsd: "
+	killproc dhsd
+
+	echo
+	rm -f /var/lock/subsys/dhsd
+	;;
+  status)
+	status dhsd
+	;;
+  restart)
+	$0 stop
+	$0 start
+	;;
+  *)
+	echo "Usage: dhsd  {start|stop|status|restart}"
+	exit 1
+esac
+
+exit 0

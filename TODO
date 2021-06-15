@@ -1,0 +1,9 @@
+* Multiple Device/Host config
+* Setuid/Setgid for daemon
+* More information in Syslog
+* .pid file output and more daemon config options
+* Error checking on http returns
+
+Possible features:
+
+* Support more dyndns services
