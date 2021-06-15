@@ -21,22 +21,33 @@
 #include "dhsd.h"
 #include <stdio.h>
 #include <unistd.h>
+#include <signal.h>
 
 void han_segv()
 {
+
+   /* TODO: add a method of debugging...dunno how! */
+
 #ifdef HAVE_SYSLOG_H
+   syslog(LOG_NOTICE,"Segmentation fault...exiting safely...");
    closelog();
 #endif
    close(sockfd);
    pdebug("SegFault in DHSD...exiting safely...");
-   //return 1;
-   exit(0);
+   
+   signal(SIGSEGV,SIG_DFL);
 }
 
 void pdebug(char *dmsg)
 {
 #ifdef DEBUG
-   printf("DhsD Debug: %s\n",dmsg);
+   
+#ifndef HAVE_SYSLOG_H
+printf("DHSD Debug: %s\n",dmsg);
+#else
+syslog(LOG_DEBUG,"DHSD Debug: %s",dmsg);
+#endif
+
 #endif
 }  
 

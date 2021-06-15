@@ -22,40 +22,47 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "dhsd.h"
+
+void addhost (char *hostname)
+{
+  strncat(config.host[config.noofhosts], hostname, strlen(hostname));
+  pdebug(hostname);
+  config.noofhosts++;
+}
 
 void parseline(char *strbuf)
 {
   int strl;
   int i = 0;
-  char cmd[10];
-  char arg[10];
+  char cmd[20];
+  char arg[20];
 
-  bzero(cmd,10);
-  bzero(arg,10);
+  bzero(cmd,sizeof(cmd));
+  bzero(arg,sizeof(arg));
 
-  strl = strlen(strbuf);
+  //filtercr(strbuf);
+  strbuf[strlen(strbuf)-1] = '\0';
 
-  if (strl > 0) {
-    if (strbuf[0] == '#') return;
-    if (strbuf[0] == '\n') return;
-    while (i < strl) {
-      if (strbuf[i] == '=') {
-        strncpy(cmd, &strbuf[0], i);
-        strncpy(arg, &strbuf[i+1], strlen(strbuf)-i-1);
-        cmd[strlen(cmd)] = '\0';
-        arg[strlen(arg)-1] = '\0';
-        break;
-      }
-      i++;
-    };  
+  splitstr(strbuf, '=', cmd, arg);
 
-    if(strcmp("username",cmd) == 0) { strncat(dhs_username, arg, strlen(arg)); return; }
-    if(strcmp("passwd",cmd) == 0) { strncat(dhs_passwd, arg, strlen(arg)); return; }
-    if(strcmp("host",cmd) == 0) { strncat(dhs_host, arg, strlen(arg)); return; }
-    if(strcmp("domain",cmd) == 0) { strncat(dhs_domain, arg, strlen(arg)); return; }
-    if(strcmp("device",cmd) == 0) { strncat(conf_dev, arg, strlen(arg)); return; }
+  if(!strcasecmp("USER",cmd)) { 
+    strncat(config.username, arg, strlen(arg));
+    return; 
+  }
+  if(!strcasecmp("PASS",cmd)) { 
+    strncat(config.passwd, arg, strlen(arg)); 
+    return; 
+  }
+  if(!strcasecmp("HOST",cmd)) {
+    addhost(arg); 
+    return;
+  }
+  if(!strcasecmp("DEV",cmd)) {
+    strncat(config.device, arg, strlen(arg));
+    return;
   }
 } 
 
@@ -68,21 +75,21 @@ int rconfig(char *filename)
   {
     filefd = fopen(filename,"r");
   } else {
-    filefd = fopen(DHSD_CONFIG,"r");
+    filefd = fopen(DHSD_DEF_CONFIG,"r");
   }
-  if (filefd == 0) {
+  if (!filefd) {
     return -1;
   }
   /* Zero the strings */
-  bzero(dhs_username,10);
-  bzero(dhs_passwd,10);
-  bzero(dhs_host,10);
-  bzero(dhs_domain,10);
-  bzero(conf_dev,4);
+  bzero(config.username,sizeof(config.username));
+  bzero(config.passwd,sizeof(config.passwd));
+  bzero(config.host,sizeof(config.host));
+  bzero(config.device,sizeof(config.device));
+  config.noofhosts = 0;
 
   /* Start parsing the file */
 
-  while (fgets(strbuf, 255, filefd)) {
+  while (fgets(strbuf, 255, filefd) != NULL) {
     if (strbuf) {
       parseline(strbuf);
     }
@@ -90,6 +97,11 @@ int rconfig(char *filename)
 
   fclose(filefd);
 
-  return 0;
+  if(config.username && config.passwd && config.device && config.noofhosts) { 
+    return 0;
+  } else {
+    return -1;
+  }
+
 }
   

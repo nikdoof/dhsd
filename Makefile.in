@@ -64,6 +64,8 @@ VERSION = @VERSION@
 
 EXTRA_DIST = TODO ChangeLog
 SUBDIRS = src scripts
+
+TAR = tar 
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ./src/config.h
@@ -75,7 +77,6 @@ missing mkinstalldirs src/config.h.in src/stamp-h.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
 GZIP_ENV = --best
 all: all-redirect
 .SUFFIXES:

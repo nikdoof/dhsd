@@ -34,58 +34,72 @@ void cleanup()
   exit(0);
 }
 
-
-int main(void)
+void sig_hup()
 {
-  int doext;
-  char verstring[255];
-  int res;
+#ifdef USE_SYSLOG
+  syslog(LOG_NOTICE,"HUP recived, reloading config");
+#endif
+  pdebug("Reloading config");
+  if (rconfig(dhsd_config)) {
+#ifdef USE_SYSLOG
+    syslog(LOG_NOTICE,"Config file cant be found, or invalid...exiting");
+#endif
+    pdebug("Config not found!");
+    exit(0);
+  }
+}
 
-  printf("DhsD %s\n\n",VERSION);
-  printf("Detaching to daemon...\n");
+int main(int argc, char **argv)
+{
+  int i, res, doext;
+
 #ifndef DEBUG
   pdetach();
+  signal(SIGSEGV,han_segv);
 #endif
   signal(SIGINT,cleanup);
   signal(SIGKILL,cleanup);
-#ifndef DEBUG
-  signal(SIGSEGV,han_segv);
-#endif
+  signal(SIGHUP,sig_hup);
 
 #ifdef HAVE_SYSLOG_H
-  verstring[0] = '\0';
   openlog("dhsd",LOG_PID,LOG_DAEMON);
-  sprintf(verstring, "DhsD %s loaded...",VERSION);
-  syslog(LOG_NOTICE,verstring);
+  syslog(LOG_NOTICE,"DHSD %s loaded...",VERSION);
 #endif
 
-  res = rconfig(DHSD_CONFIG);
-  if (res == -1) {
+  /* Loop here for multiple argvs */
+
+  if(argv[1]) {
+    strncpy(dhsd_config,argv[1],strlen(argv[1]));
+  } else {
+    strncpy(dhsd_config,DHSD_DEF_CONFIG,strlen(DHSD_DEF_CONFIG));
+  }
+  if (rconfig(dhsd_config)) {
 #ifdef USE_SYSLOG
-    syslog(LOG_ERR,"Config file cant be found, or invalid...exiting");
+    syslog(LOG_NOTICE,"Config file cant be found, or invalid...exiting");
 #endif
     pdebug("Config not found!");
     exit(0);
   }  
 
   do {
-    if (devcheck(conf_dev) == 1) {
+    if (devcheck(config.device)) {
 #ifdef HAVE_SYSLOG_H  
       syslog(LOG_NOTICE,"device ip has changed, update initiated...");
 #endif
+
+      i = 0;
+
       do {
-       res = updateip(oldaddr,dhs_domain,dhs_host);
-       if (res != 0) {
+        while(updateip(coldaddr,config.host[i])) {;
           sleep(SLEEP_TIME);
-       }
-      } while(res != 0);  
-#ifdef HAVE_SYSLOG_H
-      syslog(LOG_NOTICE,"update complete");
-#endif
+        };
+        i++;
+      } while(i != config.noofhosts);
+    
     }
     doext = 0;
     sleep(SLEEP_TIME);
-  } while(doext == 0); 
+  } while(!doext); 
   
   cleanup();
   return 0;

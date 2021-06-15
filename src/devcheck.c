@@ -32,13 +32,10 @@
 int devcheck(char *dev)
 {
    int fd;
+   int strl;
    struct sockaddr *sa;
    struct sockaddr_in *sin;
    struct ifreq ifr;
-
-   char *toldaddr;
-
-   toldaddr = oldaddr;
 
    fd = socket(PF_INET,SOCK_STREAM,0);
    if (fd == -1) {
@@ -49,17 +46,19 @@ int devcheck(char *dev)
    /* Copy the interface name into the buffer */
    strncpy(ifr.ifr_name,dev,IFNAMSIZ);
         
-   if (ioctl(fd,SIOCGIFADDR,&ifr) == -1) {
+   if (ioctl(fd,SIOCGIFADDR,&ifr)) {
       pdebug("device ioctl failed");
-      oldaddr = '\0'; // Hackaratus?
+      //oldaddr = 0; // Hackaratus?
       return -1;
    }
    /* Now the buffer will contain the information we requested */
    sa = (struct sockaddr *)&(ifr.ifr_addr);
    if (sa->sa_family == AF_INET) {
       sin = (struct sockaddr_in*) sa;
-      if (inet_ntoa(sin->sin_addr) != toldaddr) {
-         oldaddr = inet_ntoa(sin->sin_addr); 
+      if (inet_addr(inet_ntoa(sin->sin_addr)) != oldaddr) {
+   	 oldaddr = inet_addr(inet_ntoa(sin->sin_addr));
+         strl = strlen(inet_ntoa(sin->sin_addr)); 
+         strncpy(coldaddr,inet_ntoa(sin->sin_addr),strl);
          close(fd);
          return 1;
       } else {
@@ -67,7 +66,7 @@ int devcheck(char *dev)
          return 0;
       }
    } else {
-      printf(": Unknown Address Family (%d)\n",sa->sa_family);
+      pdebug("Unknown Address Family");
    }
 
    close(fd);

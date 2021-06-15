@@ -49,7 +49,7 @@ void benc( unsigned char *dst, unsigned char *s )
 
 void encbasic( char *d, const char *u, const char *p )
 {
-   char _buf[4*1024];
+   char _buf[1024];
    
    sprintf( _buf, "%s:%s", u, p);
    benc( d, _buf);

@@ -1,4 +1,4 @@
-DHSD v0.01 Beta
+DHSD v0.03 Beta
 ---------------
 
 DHSD is a dynamic update engine for the dhs.org dynamic dns service.
@@ -13,5 +13,8 @@ Thanks go to:
 
 	* Sourceforge for hosting my project
 	* Dyfet for his pdetach() code
-        * DFX for his dprintf() code
         * Peter Mac Millan for his base64.c
+        * #linpeople on OpenProjects for various linux ioctl help
+        * #c on efnet for various c coding help
+        * Boxy & Qwaz for the odd testing and bitching
+

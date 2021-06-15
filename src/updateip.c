@@ -48,7 +48,7 @@ int sconnect(char *ip)
    return isock;
 }
 
-int updateip(char *ipaddr, char *dhsdom, char *dhshost)
+int updateip(char *ipaddr, char *host)
 {
   char post_data[128];
   char post_head[128];
@@ -60,13 +60,22 @@ int updateip(char *ipaddr, char *dhsdom, char *dhshost)
   char b64str[64];
   int ibytes;
 
-  encbasic(b64str,dhs_username,dhs_passwd);
-  sprintf(chostname,"%s.%s",dhshost,dhsdom);
+  char hostn[32];
+  char domn[32];
+
+  bzero(hostn,32);
+  bzero(domn,32);
+
+  splitstr(host, '.', hostn, domn);
+
+  encbasic(b64str,config.username,config.passwd);
 
   sprintf(auth_head,"Authorization: Basic %s\r\n",b64str);
- 
-  sprintf(post_data,"%stype=4&updatetype=Online&hostscmd=edit&hostscmdstage=2&ip=%s&mx=%s&domain=%s&hostname=%s",DHS_ADDR,ipaddr,chostname,dhsdom,dhshost);
+
+  sprintf(post_data,"%stype=4&updatetype=Online&hostscmd=edit&hostscmdstage=2&ip=%s&mx=%s&domain=%s&hostname=%s",DHS_ADDR,ipaddr,host,domn,hostn);
   sprintf(post_head,"GET %s HTTP/1.0\r\n",post_data);
+
+  pdebug(post_head);
 
   sockfd = sconnect(DHS_IP);
   if (sockfd == -1) {
@@ -75,8 +84,6 @@ int updateip(char *ipaddr, char *dhsdom, char *dhshost)
   } 
 
   sprintf(outbuf,"%s%s\r\n\r\n",post_head,auth_head);
-
-  //pdebug(outbuf);
 
   send(sockfd,outbuf,strlen(outbuf),0);
 
@@ -87,12 +94,34 @@ int updateip(char *ipaddr, char *dhsdom, char *dhshost)
       strncat(databuf,tmpdatabuf,strlen(tmpdatabuf));
     }
   } while (ibytes > 0);
-  pdebug(databuf);
 
-  fclose(sockfd);
+  close(sockfd);
 
-  /* Some error checking code could be handy... */
+  /* Some very basic error checkin */
 
-  return 0;
+  if(strstr(databuf,"401")) {
+#if HAVE_SYSLOG_H
+    syslog(LOG_NOTICE,"%s: authorization failed",host);
+#endif
+    pdebug("Auth Failed");
+    return 0;
+  }
+  if (strstr(databuf,"wombat.dhs.org:")) {
+#ifdef HAVE_SYSLOG_H
+    syslog(LOG_NOTICE,"%s: update complete",host);
+#endif
+    return 0;
+  }
+  if (strstr(databuf,"The update has already been done previously.")) {  
+#ifdef HAVE_SYSLOG_H
+   syslog(LOG_NOTICE,"%s: update already occured",host);
+#endif   
+   pdebug("update already occured! returning success..."); 
+   return 0;
+  }
+
+  /* if all else fails...send a error */
+  return -1;
 }
  
+

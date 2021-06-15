@@ -1,0 +1,23 @@
+#!/bin/sh
+# Start/stop the dhsd daemon by Boxy.
+
+test -f /usr/sbin/dhsd || exit 0
+
+case "$1" in
+start)	echo -n "Starting dhsd ... "
+        start-stop-daemon --start --quiet --exec /usr/sbin/dhsd
+	echo "done"
+	;;
+stop)	echo -n "Stopping dhsd ... "
+        start-stop-daemon --stop --quiet --exec /usr/sbin/dhsd
+	echo "done"
+	;;
+restart) echo -n "Re-starting dhsd ... "
+        start-stop-daemon --stop --quiet --exec /usr/sbin/dhsd
+        start-stop-daemon --start --quiet --exec /usr/sbin/dhsd
+	echo "done"
+        ;;
+*)	echo "Usage: /etc/init.d/dhsd start|stop|restart"; exit 1 
+        ;;
+esac
+exit 0

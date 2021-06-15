@@ -1,8 +1,8 @@
-* Multiple Device/Host config
-* Setuid/Setgid for daemon
-* More information in Syslog
-* .pid file output and more daemon config options
-* Error checking on http returns
+* Multiple Device/Host config 				(99%)
+* Setuid/Setgid for daemon (needed?)    		(0%)
+* More information in Syslog  				(50%) 
+* .pid file output and more daemon config options	(0%)
+* Error checking on http returns 			(99%)
 
 Possible features:
 

@@ -66,7 +66,7 @@ prefix = /usr
 EXTRA_DIST = config.h.in stamp-h.in
 
 sbin_PROGRAMS = dhsd
-dhsd_SOURCES = main.c dhsd.h rconfig.c pdetach.c dprintf.c updateip.c devcheck.c base64.c debug.c
+dhsd_SOURCES = main.c dhsd.h rconfig.c pdetach.c updateip.c devcheck.c base64.c debug.c utils.c
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../src/config.h
 CONFIG_CLEAN_FILES = 
@@ -77,8 +77,8 @@ DEFS = @DEFS@ -I. -I$(srcdir) -I../src
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
-dhsd_OBJECTS =  main.o rconfig.o pdetach.o dprintf.o updateip.o \
-devcheck.o base64.o debug.o
+dhsd_OBJECTS =  main.o rconfig.o pdetach.o updateip.o devcheck.o \
+base64.o debug.o utils.o
 dhsd_LDADD = $(LDADD)
 dhsd_DEPENDENCIES = 
 dhsd_LDFLAGS = 
@@ -91,7 +91,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
+TAR = tar
 GZIP_ENV = --best
 SOURCES = $(dhsd_SOURCES)
 OBJECTS = $(dhsd_OBJECTS)

@@ -6,3 +6,20 @@ Version 0.02
 
   * New makefile compile/install system
   * Now uses a config file
+
+Version 0.02-1
+
+  * Fatal problems in the packaging, problems with the makefiles
+  * Few minor bugfixes
+
+Version 0.03
+
+  * Error checking code for HTTP returns
+  * Fixed problem with devcheck() not returning properly on ip changes
+    total re-write of the checking methods.
+  * Multiple host support capable of handling upto 10 hosts.
+  * Various speed improvements and bugfixes.
+
+Version 0.04
+
+  *

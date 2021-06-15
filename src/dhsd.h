@@ -25,7 +25,7 @@
 #include "config.h"
 #endif
 
-#define DHSD_CONFIG "/etc/dhsd.conf"
+#define DHSD_DEF_CONFIG "/etc/dhsd.conf"
 
 #define DHS_IP "209.249.50.99"
 #define DHS_PORT 80
@@ -40,16 +40,14 @@
 // pdetach.c - by dyfet@sourceforge.net
 void pdetach(void);
 
-// dprintf.c - by dfx@sourceforge.net
-void dprintf(int fd, char *format, ...);
-
 // devcheck.c
-char *oldaddr;
+unsigned long int oldaddr;
+char coldaddr[32];
 int devcheck(char *dev);
 
 // updateip.c
 int sockfd;
-int updateip(char *ipaddr, char *dhsdom, char *dhshost);
+int updateip(char *ipaddr, char *host);
 
 // debug.c
 void han_segv();
@@ -59,11 +57,23 @@ void pdebug(char *dmsg);
 void encbasic( char *d, const char *u, const char *p );
 
 // rconfig.c
-char dhs_username[10];
-char dhs_passwd[10];
-char dhs_host[10];
-char dhs_domain[10];
-char conf_dev[10];
+struct cdata config;
+char dhsd_config[255];
 int rconfig(char *filename);
+
+struct cdata
+{
+  char username[32];
+  char passwd[32];
+  char host[10][32];
+  char device[10];
+  int noofhosts;
+};
+
+// utils.c
+void splitstr(char *src, char delim,  char *dest1, char *dest2);
+
+// UNTESTED BETA
+void filtercr(char *str);
 
 #endif
