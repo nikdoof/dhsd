@@ -66,6 +66,8 @@ int updateip(char *ipaddr, char *host)
   bzero(hostn,32);
   bzero(domn,32);
 
+  pdebug(ipaddr);
+
   splitstr(host, '.', hostn, domn);
 
   encbasic(b64str,config.username,config.passwd);

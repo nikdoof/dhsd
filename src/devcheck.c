@@ -47,8 +47,8 @@ int devcheck(char *dev)
    strncpy(ifr.ifr_name,dev,IFNAMSIZ);
         
    if (ioctl(fd,SIOCGIFADDR,&ifr)) {
-      pdebug("device ioctl failed");
-      //oldaddr = 0; // Hackaratus?
+      pdebug("device is not up/online");
+      oldaddr = 0; // Kludges r' us?
       return -1;
    }
    /* Now the buffer will contain the information we requested */

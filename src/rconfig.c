@@ -26,13 +26,6 @@
 #include <string.h>
 #include "dhsd.h"
 
-void addhost (char *hostname)
-{
-  strncat(config.host[config.noofhosts], hostname, strlen(hostname));
-  pdebug(hostname);
-  config.noofhosts++;
-}
-
 void parseline(char *strbuf)
 {
   int strl;
@@ -57,7 +50,8 @@ void parseline(char *strbuf)
     return; 
   }
   if(!strcasecmp("HOST",cmd)) {
-    addhost(arg); 
+    strncat(config.host[config.noofhosts], arg, strlen(arg));
+    config.noofhosts++; 
     return;
   }
   if(!strcasecmp("DEV",cmd)) {

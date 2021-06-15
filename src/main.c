@@ -82,7 +82,7 @@ int main(int argc, char **argv)
   }  
 
   do {
-    if (devcheck(config.device)) {
+    if (devcheck(config.device) == 1) {
 #ifdef HAVE_SYSLOG_H  
       syslog(LOG_NOTICE,"device ip has changed, update initiated...");
 #endif
@@ -90,7 +90,8 @@ int main(int argc, char **argv)
       i = 0;
 
       do {
-        while(updateip(coldaddr,config.host[i])) {;
+        pdebug(coldaddr);
+        while(updateip(coldaddr,config.host[i])) {
           sleep(SLEEP_TIME);
         };
         i++;

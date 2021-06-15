@@ -52,15 +52,22 @@ void filtercr(char *str)
   bzero(tmpstr,256);
 
 
-  if (strl > 0) {
+  if (strl > 1) {
     while (i < strl) {
-      if (str[i] == '\n') {
+      if (str[i] == 13) {
         strncpy(tmpstr, &str[0], i-1);
+        pdebug(tmpstr);
         tmpstr[strlen(tmpstr)] = '\0';
         bzero(str,strl);
         str = tmpstr;
+        break;
       }
       i++;
     };
+    str = str;
+  } else {
+    if (str[0] == 13) {
+      str = "";
+    }
   }
 }

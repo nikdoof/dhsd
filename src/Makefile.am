@@ -7,10 +7,10 @@ dhsd_SOURCES = main.c dhsd.h rconfig.c pdetach.c updateip.c devcheck.c base64.c 
 
 if DEBUG
   DBG = -DDEBUG=1
-  CFLAGS = @CFLAGS@ $(DBG)
+  CFLAGS = @CFLAGS@ $(DBG) -O0 -g3
 else
   DBG =
-  CFLAGS = @CFLAGS@ 
+  CFLAGS = -O3 -march=pentium -mcpu=pentium -ffast-math -funroll-loops -fomit-frame-pointer -fforce-mem -fforce-addr -malign-double -fno-exceptions
 endif
 
 

@@ -1,13 +1,9 @@
-DHSD v0.03 Beta
----------------
+DHSD v1.0
+---------
 
 DHSD is a dynamic update engine for the dhs.org dynamic dns service.
 The aim is to provide a quick and efficent update engine that will
 monitor selected network devices and check for changes of the IP address.
-
-PLEASE NOTE, this is a CVS BETA release (in other words...half working)
-i have put this code onto the CVS for users to take a look at and see
-how it works.
 
 Thanks go to:
 

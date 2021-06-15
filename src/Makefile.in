@@ -272,9 +272,9 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 
 @DEBUG_TRUE@  DBG = -DDEBUG=1
-@DEBUG_TRUE@  CFLAGS = @CFLAGS@ $(DBG)
+@DEBUG_TRUE@  CFLAGS = @CFLAGS@ $(DBG) -O0 -g3
 @DEBUG_FALSE@  DBG =
-@DEBUG_FALSE@  CFLAGS = @CFLAGS@ 
+@DEBUG_FALSE@  CFLAGS = -O3 -march=pentium -mcpu=pentium -ffast-math -funroll-loops -fomit-frame-pointer -fforce-mem -fforce-addr -malign-double -fno-exceptions
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
